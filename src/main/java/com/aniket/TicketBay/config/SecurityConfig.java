@@ -4,6 +4,7 @@ import com.aniket.TicketBay.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
+    @Primary
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -32,7 +34,7 @@ public class SecurityConfig {
                 .oauth2Login(
                         oauth2->oauth2
                                 .userInfoEndpoint(userInfo->userInfo
-                                        .userService(customOAuth2UserService))
+                                        .oidcUserService(customOAuth2UserService))
                                 .successHandler(successHandler())
                 )
                 .logout(logout -> logout

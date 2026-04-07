@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<AppUser, UUID> {
-    Optional<AppUser> findByProvierAndproviderId(String provider, String providerId);
+    Optional<AppUser> findByProviderAndProviderId(String provider, String providerId);
 }

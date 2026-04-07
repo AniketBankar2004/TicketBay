@@ -3,10 +3,14 @@ package com.aniket.TicketBay.service;
 import com.aniket.TicketBay.model.AppUser;
 import com.aniket.TicketBay.model.Role;
 import com.aniket.TicketBay.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -17,34 +21,37 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
+public class CustomOAuth2UserService  extends OidcUserService {
 
     private final UserRepository userRepository;
 
 
     @Override
     @Transactional
-    public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
+    public OidcUser loadUser(OidcUserRequest request) {
 
-        OAuth2User oAuth2User = super.loadUser(request);
+        OidcUser oidcUser = super.loadUser(request);
 
-        String provider = request.getClientRegistration().getRegistrationId();
+        Map<String, Object> attrs = oidcUser.getAttributes();
 
-        Map<String, Object> attrs = oAuth2User.getAttributes();
-        String providerId = attrs.get("sub").toString();   // Google's unique user ID
-        String email      = attrs.get("email").toString();
-        String name       = attrs.get("name").toString();
+        String provider =
+                request.getClientRegistration().getRegistrationId();
+
+        String providerId = attrs.get("sub").toString();
+        String email = attrs.get("email").toString();
+        String name = attrs.get("name").toString();
+
 
         AppUser user = userRepository
-                .findByProvierAndproviderId(provider,providerId)
-                .map(existing->updateExistingUser(existing,name))
-                .orElseGet(()->createNewUser(provider,providerId,email,name));
-        return new DefaultOAuth2User(
-                List.of(()->user.getRole().name()),
-                attrs,
-                "email"
-        );
+                .findByProviderAndProviderId(provider, providerId)
+                .map(existing -> updateExistingUser(existing, name))
+                .orElseGet(() ->
+                        createNewUser(provider, providerId, email, name)
+                );
 
+
+
+        return oidcUser;
     }
 
     private AppUser createNewUser(String provider, String providerId, String email, String name) {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Table(name = "event")
+@Table(name = "events")
 @Entity
 @Builder
 @Data
