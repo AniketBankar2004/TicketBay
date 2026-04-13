@@ -2,6 +2,7 @@ package com.aniket.TicketBay.model;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
@@ -9,6 +10,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "bookings")
+@Builder
+@Data
 public class Booking {
 
     @Id

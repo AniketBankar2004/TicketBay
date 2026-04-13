@@ -1,8 +1,10 @@
 package com.aniket.TicketBay.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,6 +19,8 @@ import java.util.UUID;
 @Entity
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

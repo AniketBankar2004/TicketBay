@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth-> auth
-                        .requestMatchers(HttpMethod.GET,"/events","/events/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/events","/api/events/test","/events/**").permitAll()
                         .anyRequest().authenticated()
 
                 )
@@ -44,7 +44,6 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                 );
         return http.build();
-
     }
     @Bean
     public AuthenticationSuccessHandler successHandler() {
