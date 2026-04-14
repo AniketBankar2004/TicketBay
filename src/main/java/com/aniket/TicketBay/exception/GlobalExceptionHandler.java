@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(com.aniket.TicketBay.exception.AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(
             AccessDeniedException ex) {
 
@@ -37,6 +37,7 @@ public class GlobalExceptionHandler {
                 "error",     "You do not have permission to perform this action"
         ));
     }
+
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(
