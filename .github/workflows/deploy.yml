@@ -48,10 +48,4 @@ jobs:
             docker stop ticketbay || true
             docker rm ticketbay || true
             docker pull ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
-            docker run -d \
-              --name ticketbay \
-              -p 8000:8000 \
-              -e DB_URL=${{secrets.DB_URL}} \
-              -e GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}} \
-              -e GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}} \
-              ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
+            docker run -d --name ticketbay -p 8000:8000 -e DB_URL=${{secrets.DB_URL}} -e GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}} -e GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}} ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
