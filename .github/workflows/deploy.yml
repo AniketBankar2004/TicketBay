@@ -47,10 +47,10 @@ jobs:
           script: |
             docker stop ticketbay || true
             docker rm ticketbay || true
-            cat > /home/ubuntu/ticketbay.env << 'EOF'
+            cat > /home/ec2-user/ticketbay.env << 'EOF'
             DB_URL=${{secrets.DB_URL}}
             GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}}
             GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}}
             EOF
             docker pull ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
-            docker run -d --name ticketbay -p 8000:8000 --env-file /home/ubuntu/ticketbay.env ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
+            docker run -d --name ticketbay -p 8000:8000 --env-file /home/ec2-user/ticketbay.env ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
