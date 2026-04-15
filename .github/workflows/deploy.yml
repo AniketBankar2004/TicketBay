@@ -44,15 +44,17 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_URL,G_ID,G_SECRET,DOCKER_USER
-        env:
-          DB_URL: ${{ secrets.DB_URL }}
-          G_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          G_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-          
+          # List all variables that need to be passed to the remote shell
+          envs: DB_URL,G_ID,G_SECRET,G_REDIRECT,DOCKER_USER
           script: |
             docker pull $DOCKER_USER/ticketbay:latest
             docker stop ticketbay || true
             docker rm ticketbay || true
-            docker run -d --name ticketbay -p 8000:8000 -e DB_URL="$DB_URL" -e GOOGLE_CLIENT_ID="$G_ID" -e GOOGLE_CLIENT_SECRET="$G_SECRET" $DOCKER_USER/ticketbay:latest
+            docker run -d --name ticketbay -p 8000:8000 -e DB_URL="$DB_URL" -e GOOGLE_CLIENT_ID="$G_ID" -e GOOGLE_CLIENT_SECRET="$G_SECRET" -e GOOGLE_REDIRECT_URI="$G_REDIRECT" $DOCKER_USER/ticketbay:latest
+        env:
+          # These map your GitHub Secrets to the variables named in 'envs' above
+          DB_URL: ${{ secrets.DB_URL }}
+          G_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          G_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          G_REDIRECT: http://${{ secrets.EC2_HOST }}.nip.io/login/oauth2/code/google
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
