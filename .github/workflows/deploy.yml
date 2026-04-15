@@ -2,7 +2,7 @@ name: Docker Build ->Image ->Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
 
