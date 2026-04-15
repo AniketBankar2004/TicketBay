@@ -35,6 +35,4 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.OK).body(bookingService.getMyEvents(authentication));
     }
 
-
-
 }
