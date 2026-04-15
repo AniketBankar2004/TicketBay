@@ -41,16 +41,18 @@ jobs:
       - name: SSH and Deploy to EC2
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{secrets.EC2_HOST}}
+          host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DB_URL,G_ID,G_SECRET,DOCKER_USER
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          G_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          G_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          
           script: |
+            docker pull $DOCKER_USER/ticketbay:latest
             docker stop ticketbay || true
             docker rm ticketbay || true
-            cat > /home/ec2-user/ticketbay.env << 'EOF'
-            DB_URL=${{secrets.DB_URL}}
-            GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}}
-            GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}}
-            EOF
-            docker pull ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
-            docker run -d --name ticketbay -p 8000:8000 --env-file /home/ec2-user/ticketbay.env ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
+            docker run -d --name ticketbay -p 8000:8000 -e DB_URL="$DB_URL" -e GOOGLE_CLIENT_ID="$G_ID" -e GOOGLE_CLIENT_SECRET="$G_SECRET" $DOCKER_USER/ticketbay:latest
