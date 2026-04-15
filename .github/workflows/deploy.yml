@@ -25,14 +25,15 @@ jobs:
           chmod +x ./mvnw
           ./mvnw clean package -DskipTests
 
-      - name: Build Docker Image
-        run: docker build -t ${{secrets.DOCKERHUB_USERNAME}}/ticketbay .
 
       - name: Login to Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker Image
+        run: docker build -t ${{secrets.DOCKERHUB_USERNAME}}/ticketbay .
 
       - name: Push Docker Image
         run: docker push ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
@@ -44,7 +45,13 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker stop spring-boot-ci-demo || true
-            docker rm spring-boot-ci-demo || true
-            docker pull ${{secrets.DOCKERHUB_USERNAME}}/spring-boot-ci-demo:latest
-            docker run -d --name ticketbay -p 8080:8080 ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
+            docker stop ticketbay || true
+            docker rm ticketbay || true
+            docker pull ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
+            docker run -d \
+              --name ticketbay \
+              -p 8000:8000 \
+              -e DB_URL=${{secrets.DB_URL}} \
+              -e GOOGLE_CLIENT_ID=${{secrets.GOOGLE_CLIENT_ID}} \
+              -e GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}} \
+              ${{secrets.DOCKERHUB_USERNAME}}/ticketbay:latest
