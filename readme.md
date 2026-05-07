@@ -40,7 +40,7 @@ GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 ```
 
-> **Note:** Never commit your `.env` file. It is already listed in `.gitignore`.
+
 
 ---
 
